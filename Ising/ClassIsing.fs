@@ -1,4 +1,4 @@
-namespace Version3
+namespace ClassIsing
 
 open Domain
 
@@ -46,7 +46,7 @@ type Ising(parameters: Parameters) =
 
         sum
 
-    member this.Simulate () =
+    member _.Simulate () =
         let probabilities =
             [| for dE in -8. .. 4. .. 8. -> exp (-parameters.Beta * dE) |]
 

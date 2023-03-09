@@ -31,28 +31,28 @@ type Benchmarks() =
     [<Benchmark>]
     member _.TensorToArray () =
         let lattice =
-            Version1.Ising.initLattice parameters.LatticeSize parameters.Rng
+            TensorToArray.Ising.initLattice parameters.LatticeSize parameters.Rng
 
-        lattice |> Version1.Ising.simulate parameters
+        lattice |> TensorToArray.Ising.simulate parameters
 
     [<Benchmark>]
     member _.SbyteArray () =
         let lattice =
-            Version2.Ising.initLattice parameters.LatticeSize parameters.Rng
+            SbyteArray.Ising.initLattice parameters.LatticeSize parameters.Rng
 
-        lattice |> Version2.Ising.simulate parameters
+        lattice |> SbyteArray.Ising.simulate parameters
 
     [<Benchmark>]
-    member _.ClassWithoutPassingArray () =
-        let ising = Version3.Ising(parameters)
+    member _.ClassIsing () =
+        let ising = ClassIsing.Ising(parameters)
         ising.Simulate()
 
     [<Benchmark>]
     member _.RecursiveSimulate () =
         let lattice =
-            Version4.Ising.initLattice parameters.LatticeSize parameters.Rng
+            RecursiveSimulate.Ising.initLattice parameters.LatticeSize parameters.Rng
 
-        lattice |> Version4.Ising.simulate parameters
+        lattice |> RecursiveSimulate.Ising.simulate parameters
 
 [<EntryPoint>]
 let main _ =

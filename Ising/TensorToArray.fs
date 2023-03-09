@@ -1,6 +1,7 @@
-namespace Version2
+namespace TensorToArray
 
-// open FSharp.Stats
+open FSharp.Stats
+
 open Domain
 
 module private Helpers =
@@ -11,7 +12,7 @@ module private Helpers =
 
     let inline idx (i: int) (j: int) (size: int) = i + j * size
 
-    let inline spinSum (i, j) (lattice: array<sbyte>) size =
+    let inline spinSum (i, j) (lattice: array<int>) size =
         lattice.[idx ((i - 1) %/ size) j size]
         + lattice.[idx ((i + 1) %/ size) j size]
         + lattice.[idx i ((j - 1) %/ size) size]
@@ -21,33 +22,24 @@ open Helpers
 
 module Ising =
 
-    let initLattice (size: int) (rng: System.Random) =
-        (fun _ -> if rng.NextDouble() < 0.5 then 1y else -1y)
-        |> Array.init (size * size)
+    let initLattice (size: int64) (rng: System.Random) =
+        (fun _ -> if rng.NextDouble() < 0.5 then 1 else -1)
+        |> Array.init (int size * int size)
 
-    let totalEnergy (lattice: array<sbyte>) size =
+    let totalEnergy (lattice: array<int>) size =
         let mutable sum = 0
 
         for i in 0 .. size - 1 do
             for j in 0 .. size - 1 do
                 sum <-
                     sum
-                    + int (
-                        lattice.[idx i j size]
-                        * (spinSum (i, j) lattice size)
-                    )
+                    + (lattice.[idx i j size]
+                       * (spinSum (i, j) lattice size))
 
         -sum / 2
 
-    let totalMagnetization lattice =
-        let mutable sum = 0
 
-        for spin in lattice do
-            sum <- sum + int spin
-
-        sum
-
-    let simulate (parameters: Parameters) (lattice: sbyte array) =
+    let simulate (parameters: Parameters) lattice =
         let probabilities =
             [| for dE in -8. .. 4. .. 8. -> exp (-parameters.Beta * dE) |]
 
@@ -56,7 +48,7 @@ module Ising =
             |> float
 
         let mutable magnetization =
-            totalMagnetization lattice |> float
+            lattice |> Array.sum |> float
 
         let steps =
             [|
@@ -71,16 +63,15 @@ module Ising =
                         lattice.[idx i j parameters.LatticeSize]
 
                     let dE =
-                        2y
+                        2
                         * spin
                         * (spinSum (i, j) lattice parameters.LatticeSize)
 
-                    let dM = -2y * spin
+                    let dM = -2 * spin
 
                     if
-                        dE < 0y
-                        || (parameters.Rng.NextDouble() < probabilities.[int dE
-                                                                         / 4
+                        dE < 0
+                        || (parameters.Rng.NextDouble() < probabilities.[dE / 4
                                                                          + 2])
                     then
                         lattice.[idx i j parameters.LatticeSize] <- -spin
@@ -95,26 +86,26 @@ module Ising =
         let avgE =
             (steps |> Array.averageBy fst) / float N
 
-        // let C =
-        //     (steps |> Array.map fst |> Seq.stDev)
-        //     * parameters.Beta ** 2.
-        //     / float N
+        let C =
+            (steps |> Array.map fst |> Seq.stDev)
+            * parameters.Beta ** 2.
+            / float N
 
         let avgM =
             (steps |> Array.averageBy (snd >> abs))
             / float N
 
-        // let X =
-        //     (steps
-        //      |> Array.map (snd >> abs)
-        //      |> Seq.stDev)
-        //     * parameters.Beta
-        //     / float N
+        let X =
+            (steps
+             |> Array.map (snd >> abs)
+             |> Seq.stDev)
+            * parameters.Beta
+            / float N
 
         {
             Beta = parameters.Beta
             AvgE = avgE
-            C = 0.0
+            C = C
             AvgM = avgM
-            X = 0.0
+            X = X
         }

@@ -10,10 +10,10 @@
     <ItemGroup>
         <Compile Include="Domain.fs" />
         <Compile Include="Initial.fs" />
-        <Compile Include="Version1.fs" />
-        <Compile Include="Version2.fs" />
-        <Compile Include="Version3.fs" />
-        <Compile Include="Version4.fs" />
+        <Compile Include="TensorToArray.fs" />
+        <Compile Include="SbyteArray.fs" />
+        <Compile Include="ClassIsing.fs" />
+        <Compile Include="RecursiveSimulate.fs" />
     </ItemGroup>
 
     <ItemGroup>
