@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <Platform>x64</Platform>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Domain.fs" />
+        <Compile Include="Initial.fs" />
+        <Compile Include="Version1.fs" />
+        <Compile Include="Version2.fs" />
+        <Compile Include="Version3.fs" />
+        <Compile Include="Version4.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FSharp.Stats" Version="0.4.11" />
+        <PackageReference Include="Tensor" Version="0.4.11" />
+    </ItemGroup>
+
+</Project>

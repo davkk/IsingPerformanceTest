@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Ising", "Ising\Ising.fsproj", "{8738CE4F-31BA-47DB-BE3A-0B4D8A02C84D}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Ising.Benchmark", "Ising.Benchmark\Ising.Benchmark.fsproj", "{114715B6-B457-4ECA-BB8E-CF8DB5E272C3}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Ising.Tests", "Ising.Tests\Ising.Tests.fsproj", "{2167FB74-603A-49E5-AE92-44674DBF4418}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8738CE4F-31BA-47DB-BE3A-0B4D8A02C84D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8738CE4F-31BA-47DB-BE3A-0B4D8A02C84D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8738CE4F-31BA-47DB-BE3A-0B4D8A02C84D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8738CE4F-31BA-47DB-BE3A-0B4D8A02C84D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{114715B6-B457-4ECA-BB8E-CF8DB5E272C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{114715B6-B457-4ECA-BB8E-CF8DB5E272C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{114715B6-B457-4ECA-BB8E-CF8DB5E272C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{114715B6-B457-4ECA-BB8E-CF8DB5E272C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2167FB74-603A-49E5-AE92-44674DBF4418}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2167FB74-603A-49E5-AE92-44674DBF4418}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2167FB74-603A-49E5-AE92-44674DBF4418}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2167FB74-603A-49E5-AE92-44674DBF4418}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
