@@ -26,21 +26,26 @@ type Benchmarks() =
         let lattice =
             Initial.Ising.initLattice parameters
 
-        lattice |> Initial.Ising.simulate parameters
+        lattice
+        |> Initial.Ising.simulate parameters
 
     [<Benchmark>]
     member _.TensorToArray () =
         let lattice =
-            TensorToArray.Ising.initLattice parameters.LatticeSize parameters.Rng
+            TensorToArray.Ising.initLattice
+                parameters.LatticeSize
+                parameters.Rng
 
-        lattice |> TensorToArray.Ising.simulate parameters
+        lattice
+        |> TensorToArray.Ising.simulate parameters
 
     [<Benchmark>]
     member _.SbyteArray () =
         let lattice =
             SbyteArray.Ising.initLattice parameters.LatticeSize parameters.Rng
 
-        lattice |> SbyteArray.Ising.simulate parameters
+        lattice
+        |> SbyteArray.Ising.simulate parameters
 
     [<Benchmark>]
     member _.ClassIsing () =
@@ -50,9 +55,22 @@ type Benchmarks() =
     [<Benchmark>]
     member _.RecursiveSimulate () =
         let lattice =
-            RecursiveSimulate.Ising.initLattice parameters.LatticeSize parameters.Rng
+            RecursiveSimulate.Ising.initLattice
+                parameters.LatticeSize
+                parameters.Rng
 
-        lattice |> RecursiveSimulate.Ising.simulate parameters
+        lattice
+        |> RecursiveSimulate.Ising.simulate parameters
+
+    [<Benchmark>]
+    member _.LatticeWrapper () =
+        LatticeWrapper.Lattice(parameters.LatticeSize, parameters.Rng)
+        |> LatticeWrapper.Ising.simulate parameters
+
+    [<Benchmark>]
+    member _.Jagged2DArray () =
+        Jagged2DArray.Lattice(parameters.LatticeSize, parameters.Rng)
+        |> Jagged2DArray.Ising.simulate parameters
 
 [<EntryPoint>]
 let main _ =

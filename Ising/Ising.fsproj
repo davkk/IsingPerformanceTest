@@ -14,6 +14,8 @@
         <Compile Include="SbyteArray.fs" />
         <Compile Include="ClassIsing.fs" />
         <Compile Include="RecursiveSimulate.fs" />
+        <Compile Include="LatticeWrapper.fs" />
+        <Compile Include="Jagged2DArray.fs" />
     </ItemGroup>
 
     <ItemGroup>
