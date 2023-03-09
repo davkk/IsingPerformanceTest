@@ -23,7 +23,7 @@ open Helpers
 
 module Ising =
 
-    let initLattice parameters =
+    let initLattice (parameters: Parameters) =
         HostTensor.init
             [ parameters.LatticeSize; parameters.LatticeSize ]
             (fun _ -> if parameters.Rng.NextDouble() < 0.5 then -1 else 1)

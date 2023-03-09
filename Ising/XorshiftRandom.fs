@@ -1,4 +1,4 @@
-namespace LatticeWrapper
+namespace XorshiftRandom
 
 open Domain
 
@@ -10,16 +10,16 @@ open Helpers
 
 [<Struct>]
 type Lattice(spins: sbyte array, size: int) =
-    new(size: int, rng: System.Random) =
+    new(parameters: SimParams) =
         let lattice =
-            Array.zeroCreate<sbyte> (size * size)
+            Array.zeroCreate<sbyte> (parameters.LatticeSize * parameters.LatticeSize)
 
         lattice
         |> Array.iteri (fun i _ ->
-            lattice.[i] <- if rng.NextDouble() > 0.5 then 1y else -1y
+            lattice.[i] <- if parameters.Rng.NextFloat() < 0.5f then 1y else -1y
         )
 
-        Lattice(lattice, size)
+        Lattice(lattice, parameters.LatticeSize)
 
     member _.Spins = spins
     member _.Size = size
@@ -70,9 +70,9 @@ module Lattice =
         float sum
 
 module Ising =
-    let simulate (parameters: Parameters) (lattice: Lattice) =
+    let simulate (parameters: SimParams) (lattice: Lattice) =
         let probabilities =
-            [| for dE in -8. .. 4. .. 8. -> exp (-parameters.Beta * dE) |]
+            [| for dE in -8. .. 4. .. 8. -> exp (-parameters.Beta * dE) |> float32 |]
 
         let rec loop (sweep, energy, magnetization) =
             if sweep = parameters.Sweeps then
@@ -101,7 +101,7 @@ module Ising =
                 let dM = -2y * currentSpin
 
                 let shouldFlip =
-                    parameters.Rng.NextDouble() < probabilities.[int dE / 4 + 2]
+                    parameters.Rng.NextFloat() < probabilities.[int dE / 4 + 2]
 
                 if dE < 0y || shouldFlip then
                     lattice.Spins.[randomIndex] <- -currentSpin

@@ -3,22 +3,36 @@ open BenchmarkDotNet.Attributes
 open BenchmarkDotNet.Diagnosers
 
 open Domain
+open Xoshiro.PRNG64
 
 [<MemoryDiagnoser>]
 [<MedianColumn>]
 [<HardwareCounters(HardwareCounter.CacheMisses,
                    HardwareCounter.BranchInstructions,
                    HardwareCounter.BranchMispredictions)>]
-[<EventPipeProfiler(EventPipeProfile.CpuSampling)>]
+// [<EventPipeProfiler(EventPipeProfile.CpuSampling)>]
 type Benchmarks() =
+
+    let seed = 2001
+    let sweeps = 1_000_000
+    let latticeSize = 128
+    let beta = 1.4
 
     let parameters: Parameters =
         {
-            Rng = System.Random(2001)
-            Sweeps = 1_000_000
-            LatticeSize = 128
+            Rng = System.Random(seed)
+            Sweeps = sweeps
+            LatticeSize = latticeSize
             NumOfStates = 2
-            Beta = 1.4
+            Beta = beta
+        }
+
+    let simParams: SimParams =
+        {
+            Rng = XoRoShiRo128plus(seed)
+            Sweeps = sweeps
+            LatticeSize = latticeSize
+            Beta = beta
         }
 
     [<Benchmark>]
@@ -71,6 +85,11 @@ type Benchmarks() =
     member _.Jagged2DArray () =
         Jagged2DArray.Lattice(parameters.LatticeSize, parameters.Rng)
         |> Jagged2DArray.Ising.simulate parameters
+
+    [<Benchmark>]
+    member _.XorshiftRandom () =
+        XorshiftRandom.Lattice(simParams)
+        |> XorshiftRandom.Ising.simulate simParams
 
 [<EntryPoint>]
 let main _ =

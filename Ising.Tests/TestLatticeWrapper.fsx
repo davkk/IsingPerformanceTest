@@ -1,34 +1,46 @@
 #r "nuget: Plotly.NET"
 #r "nuget: Plotly.NET.ImageExport"
+#r "nuget: XoshiroPRNG.Net"
 
 #load "../Ising/Domain.fs"
-#load "../Ising/Jagged2DArray.fs"
+#load "../Ising/XorshiftRandom.fs"
 
 open System.IO
 open Plotly.NET
 open Plotly.NET.ImageExport
 
-open Domain
-open Jagged2DArray
+open Xoshiro.PRNG64
 
-let parameters: Parameters =
+open Domain
+open XorshiftRandom
+
+// let parameters: Parameters =
+//     {
+//         Rng = System.Random()
+//         LatticeSize = 256
+//         Sweeps = 10_000_000
+//         NumOfStates = 2
+//         Beta = 1.4
+//     }
+
+let parameters: SimParams =
     {
-        Rng = System.Random()
+        Rng = XoRoShiRo128plus(2001)
         LatticeSize = 256
         Sweeps = 10_000_000
-        NumOfStates = 2
         Beta = 1.4
     }
 
 
 let lattice =
-    Lattice(parameters.LatticeSize, parameters.Rng)
+    Lattice(parameters)
 
 lattice |> Ising.simulate parameters
 
 
 Chart.Heatmap(
     lattice.Spins
+    |> Array.chunkBySize lattice.Size
     |> Array.toList,
     ColorScale = StyleParam.Colorscale.Hot
 )

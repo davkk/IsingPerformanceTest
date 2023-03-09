@@ -16,11 +16,16 @@
         <Compile Include="RecursiveSimulate.fs" />
         <Compile Include="LatticeWrapper.fs" />
         <Compile Include="Jagged2DArray.fs" />
+        <Compile Include="XorshiftRandom.fs" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="CenterCLR.XorRandomGenerator" Version="1.1.0" />
         <PackageReference Include="FSharp.Stats" Version="0.4.11" />
+        <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+        <PackageReference Include="MathNet.Numerics.FSharp" Version="5.0.0" />
         <PackageReference Include="Tensor" Version="0.4.11" />
+        <PackageReference Include="XoshiroPRNG.Net" Version="1.6.0" />
     </ItemGroup>
 
 </Project>
