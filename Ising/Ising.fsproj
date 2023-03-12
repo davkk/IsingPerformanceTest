@@ -17,6 +17,11 @@
         <Compile Include="LatticeWrapper.fs" />
         <Compile Include="Jagged2DArray.fs" />
         <Compile Include="XorshiftRandom.fs" />
+        <Compile Include="ArrayOfStructs.fs" />
+        <Compile Include="NeighborsArray.fs" />
+        <Compile Include="Final.fs" />
+        <Compile Include="StructTuples.fs" />
+        <Compile Include="BetterXorshift.fs" />
     </ItemGroup>
 
     <ItemGroup>

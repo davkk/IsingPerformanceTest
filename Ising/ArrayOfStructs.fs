@@ -1,32 +1,47 @@
-namespace XorshiftRandom
+namespace ArrayOfStructs
 
-open System.Buffers
 open Domain
 
 module private Helpers =
     let inline (%/) a b = (a + b) % b
-    let inline idx2 (k: int) (size: int) = k % size, k / size
+    let inline idx1d (i: int, j: int, size: int) = i + j * size
+    let inline idx2d (k: int, size: int) = k % size, k / size
 
 open Helpers
 
 [<Struct>]
-type Lattice(spins: sbyte array, size: int) =
+type Node =
+    {
+        mutable Spin: sbyte
+        Neighbors: int * int * int * int
+    }
+
+    member self.FlipSpin () = self.Spin <- -self.Spin
+
+[<Struct>]
+type Lattice(nodes: Node array, size: int) =
     new(parameters: SimParams) =
+        let size = parameters.LatticeSize
 
-        let pool = ArrayPool<sbyte>.Shared
-        let lattice = pool.Rent(parameters.LatticeSize * parameters.LatticeSize);
-        pool.Return(lattice)
-        // let lattice =
-        //     Array.zeroCreate<sbyte> (parameters.LatticeSize * parameters.LatticeSize)
+        let lattice =
+            Array.zeroCreate<Node> (size * size)
 
-        lattice
-        |> Array.iteri (fun i _ ->
-            lattice.[i] <- if parameters.Rng.NextFloat() < 0.5f then 1y else -1y
-        )
+        for k in 0 .. lattice.Length - 1 do
+            let i, j = idx2d (k, size)
 
-        Lattice(lattice, parameters.LatticeSize)
+            lattice.[k] <-
+                {
+                    Spin = if parameters.Rng.NextFloat() < 0.5f then 1y else -1y
+                    Neighbors =
+                        idx1d ((i - 1) %/ size, j, size),
+                        idx1d ((i + 1) %/ size, j, size),
+                        idx1d (i, (j - 1) %/ size, size),
+                        idx1d (i, (j + 1) %/ size, size)
+                }
 
-    member _.Spins = spins
+        Lattice(lattice, size)
+
+    member _.Spins = nodes
     member _.Size = size
 
     member self.Spin (i: int, j: int) =
@@ -42,26 +57,25 @@ type Lattice(spins: sbyte array, size: int) =
 
         self.Spins.[i + j * self.Size]
 
-    member self.SumNeighbors (i: int, j: int) =
-        self.Spin((i - 1) %/ self.Size, j)
-        + self.Spin((i + 1) %/ self.Size, j)
-        + self.Spin(i, (j - 1) %/ self.Size)
-        + self.Spin(i, (j + 1) %/ self.Size)
-
     member self.SumNeighbors (k: int) =
-        let i, j = Helpers.idx2 k self.Size
-        self.SumNeighbors(i, j)
+        let left, right, top, down =
+            self.Spins.[k].Neighbors
+
+        self.Spins.[left].Spin
+        + self.Spins.[right].Spin
+        + self.Spins.[top].Spin
+        + self.Spins.[down].Spin
 
 module Lattice =
     let inline totalEnergy (lattice: Lattice) =
         let mutable sum = 0
 
-        for i in 0 .. lattice.Spins.Length - 1 do
+        for k in 0 .. lattice.Spins.Length - 1 do
             sum <-
                 sum
                 + int (
-                    lattice.Spins.[i]
-                    * lattice.SumNeighbors i
+                    lattice.Spins.[k].Spin
+                    * lattice.SumNeighbors(k)
                 )
 
         -float sum / 2.
@@ -69,15 +83,18 @@ module Lattice =
     let inline totalMagnetization (lattice: Lattice) =
         let mutable sum = 0
 
-        for spin in lattice.Spins do
-            sum <- sum + int spin
+        for node in lattice.Spins do
+            sum <- sum + int node.Spin
 
         float sum
 
 module Ising =
     let simulate (parameters: SimParams) (lattice: Lattice) =
         let probabilities =
-            [| for dE in -8. .. 4. .. 8. -> exp (-parameters.Beta * dE) |> float32 |]
+            [|
+                for dE in -8. .. 4. .. 8. ->
+                    exp (-parameters.Beta * dE) |> float32
+            |]
 
         let rec loop (sweep, energy, magnetization) =
             if sweep = parameters.Sweeps then
@@ -95,21 +112,20 @@ module Ising =
                 let randomIndex =
                     parameters.Rng.Next(0, lattice.Spins.Length)
 
-                let currentSpin =
-                    lattice.Spins.[randomIndex]
+                let node = lattice.Spins.[randomIndex]
 
                 let dE =
                     2y
-                    * currentSpin
-                    * lattice.SumNeighbors randomIndex
+                    * node.Spin
+                    * lattice.SumNeighbors(randomIndex)
 
-                let dM = -2y * currentSpin
+                let dM = -2y * node.Spin
 
                 let shouldFlip =
                     parameters.Rng.NextFloat() < probabilities.[int dE / 4 + 2]
 
                 if dE < 0y || shouldFlip then
-                    lattice.Spins.[randomIndex] <- -currentSpin
+                    node.FlipSpin()
 
                     loop (
                         sweep + 1,
